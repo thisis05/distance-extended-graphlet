@@ -5,8 +5,10 @@
 #include <vector>
 #include <stdexcept>
 #include <cstring>
-#include <windows.h>
-#include <psapi.h>
+#ifdef _WIN32
+    #include <windows.h>
+    #include <psapi.h>
+#endif
 #include <iostream>
 
 #define DEBUG_PRINT(fmt, ...) printf(fmt, __VA_ARGS__)
@@ -96,7 +98,8 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) {
 
     FourSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
-    const Count num_threads = 11;
+    const Count num_threads = omp_get_max_threads()-1;
+    printf("# thread : %lld\n", num_threads);
     Count current = 0;
     omp_set_num_threads(num_threads);
     EdgeIdx** all_local_tri1 = new EdgeIdx*[num_threads];
@@ -580,13 +583,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
             delete[] local_star2_1;
             delete[] local_star2_2;
 
-            #pragma omp critical
-            {
-                if (current % 10 == 0){
-                    printf("Node : %lld / %lld done...\n", current, gout->nVertices);
-                }
-                current++;
-            }
+            // #pragma omp critical
+            // {
+            //     if (current % 10 == 0){
+            //         printf("Node : %lld / %lld done...\n", current, gout->nVertices);
+            //     }
+            //     current++;
+            // }
         }
         
 

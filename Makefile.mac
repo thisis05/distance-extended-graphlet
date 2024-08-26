@@ -1,0 +1,21 @@
+LLVM_DIR = /opt/homebrew/opt/llvm
+OPENMP_LIB ?= 1
+
+all: main
+
+CXXFLAGS = -O3 -g -std=c++17
+ifeq ($(OPENMP_LIB),1)
+    CXXFLAGS += -fopenmp
+    LDFLAGS += -fopenmp
+endif
+CXXFLAGS += -ffast-math -funroll-loops -fno-strict-aliasing \
+          -fomit-frame-pointer -march=native
+
+CXX = $(LLVM_DIR)/bin/clang++
+
+main: main.cpp graph.cpp digraph.cpp counter.cpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main main.cpp graph.cpp digraph.cpp counter.cpp
+
+clean:
+	@echo "Removing executables"
+	rm -f main

@@ -64,13 +64,22 @@ struct FourSizeInfo {
     }
 };
 
-struct CycleInfo {
-    Count cycle1;
-    Count cycle2; 
-    Count cycle3; 
-    Count cycle4;
-    CycleInfo() 
-    : cycle1(0), cycle2(0), cycle3(0), cycle4(0) {}
+struct StarInfo {
+    VertexIdx* star1;
+    VertexIdx* star2_1;
+    VertexIdx* star2_2;
+
+    StarInfo(VertexIdx nv) {
+        star1 = new VertexIdx[nv+1]();
+        star2_1 = new VertexIdx[nv+1]();
+        star2_2 = new VertexIdx[nv+1]();
+    }
+
+    ~StarInfo() {
+        delete[] star1;
+        delete[] star2_1;
+        delete[] star2_2;
+    }
 };
 
 

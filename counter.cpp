@@ -10,10 +10,12 @@
     #include <psapi.h>
 #endif
 #include <iostream>
+#include <chrono>
 
 #define DEBUG_PRINT(fmt, ...) printf(fmt, __VA_ARGS__)
 
-
+using namespace std;
+using namespace std::chrono;
 
 ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 
@@ -100,6 +102,7 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
     FourSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
     const Count num_threads = omp_get_max_threads()-1;
     printf("# thread : %lld\n", num_threads);
+
     Count current = 0;
     omp_set_num_threads(num_threads);
     EdgeIdx** all_local_tri1 = new EdgeIdx*[num_threads];
@@ -124,6 +127,8 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
         Count thread_id = omp_get_thread_num();
         Count vertex_dg, vertex_dg2;
 
+        StarInfo local_star(gout->nVertices);
+
         EdgeIdx e_j, e_k, loc111, loc112, loc121, loc122, loc211, loc212, loc221, loc_222, loc1, loc2;
         VertexIdx i, j, k, k1, k2, k1_idx, k2_idx;
 
@@ -133,10 +138,6 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
             const EdgeIdx end = gout->offsets[i+1];
             const EdgeIdx start_2 = gout_2->offsets[i];
             const EdgeIdx end_2 = gout_2->offsets[i+1];
-
-            VertexIdx* local_star1 = new VertexIdx[gout->nVertices+1]();
-            VertexIdx* local_star2_1 = new VertexIdx[gout->nVertices+1]();   
-            VertexIdx* local_star2_2 = new VertexIdx[gout->nVertices+1]();   
 
             vertex_dg2 = gout_2->degree(i) + gin_2->degree(i);
             vertex_dg = gout->degree(i) + gin->degree(i);
@@ -215,9 +216,7 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
                 for (e_k = gout_2->offsets[j]; e_k < gout_2->offsets[j+1]; ++e_k) {
                     k = gout_2->nbors[e_k];
                     //printf("e1 out - e2 out : %lld - %lld - %lld ", i, j, k);
-                    local_star2_1[k]++;
-                    //printf("local_star2_1[%lld] : %lld\n", k, local_star2_1[k]);
-                    
+                    local_star.star2_1[k]++;
                 }
 
                 //e1 out - e2 in
@@ -225,9 +224,9 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
                     k = gin_2->nbors[e_k];
                     if (k > i){
                         //printf("e1 out - e2 in : %lld - %lld - %lld\n", i, j, k);
-                        local_star2_1[k]++;
+                        local_star.star2_1[k]++;
                     }
-                }
+                }    
 
                 // 1. Tri4-based
                 for (k1_idx = 0; k1_idx < local_tri4.count; ++k1_idx){
@@ -413,26 +412,26 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
                 for (e_k = gout_2->offsets[j]; e_k < gout_2->offsets[j+1]; ++e_k) {
                     k = gout_2->nbors[e_k];
                     //printf("e2 out - e2 out : %lld - %lld - %lld\n", i, j, k);
-                    local_star1[k]++;
+                    local_star.star1[k]++;
                 }
                 
                 //e2 out - e2 in
                 for (e_k = gin_2->offsets[j]; e_k < gin_2->offsets[j+1]; ++e_k) {
                     k = gin_2->nbors[e_k];
                     //printf("e2 out - e2 in : %lld - %lld - %lld\n", i, j, k);
-                    if (k > i){local_star1[k]++;}
+                    if (k > i){local_star.star1[k]++;}
                 }
 
                 //e2 out - e1 out
                 for (e_k = gout->offsets[j]; e_k < gout->offsets[j+1]; ++e_k) {
                     k = gout->nbors[e_k];
-                    local_star2_2[k]++;
+                    local_star.star2_2[k]++;
                 }
 
                 //e2 out - e1 in
                 for (e_k = gin->offsets[j]; e_k < gin->offsets[j+1]; ++e_k) {
                     k = gin->nbors[e_k];
-                    if (k > i){local_star2_2[k]++;}
+                    if (k > i){local_star.star2_2[k]++;}
                 }
                 
 
@@ -544,21 +543,22 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
                 
                 for (e_k = gout_2->offsets[j]; e_k < gout_2->offsets[j+1]; ++e_k) {
                     k = gout_2->nbors[e_k];
-                    local_ret.cycle1 += (local_star1[k] * (local_star1[k] - 1)) / 2;
-                    local_ret.cycle2 += (local_star1[k] * (local_star2_1[k] + local_star2_2[k]));
+                    local_ret.cycle1 += (local_star.star1[k] * (local_star.star1[k] - 1)) / 2;
+                    local_ret.cycle2 += (local_star.star1[k] * (local_star.star2_1[k] + local_star.star2_2[k]));
                     //printf("%lld to %lld : star1 %lld and star2_1 %lld and star2_2 %lld\n", i, k, local_star1[k], local_star2_1[k], local_star2_2[k]);
-                    local_star1[k] = 0;
+                    local_star.star1[k] = 0;
                 }
 
                 for (e_k = gin_2->offsets[j]; e_k < gin_2->offsets[j+1]; ++e_k) {
                     k = gin_2->nbors[e_k];
                     if (k > i) {    
-                        local_ret.cycle1 += (local_star1[k] * (local_star1[k] - 1)) / 2;
-                        local_ret.cycle2 += (local_star1[k] * (local_star2_1[k] + local_star2_2[k]));
+                        local_ret.cycle1 += (local_star.star1[k] * (local_star.star1[k] - 1)) / 2;
+                        local_ret.cycle2 += (local_star.star1[k] * (local_star.star2_1[k] + local_star.star2_2[k]));
                         //printf("%lld to %lld : star1 %lld and star2_1 %lld and star2_2 %lld\n", i, k, local_star1[k], local_star2_1[k], local_star2_2[k]);
-                        local_star1[k] = 0;
+                        local_star.star1[k] = 0;
                     }
                 }
+
             }
 
             for (e_j = gout_2->offsets[i]; e_j < gout_2->offsets[i+1]; ++e_j){
@@ -566,30 +566,44 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
 
                 for (e_k = gout->offsets[j]; e_k < gout->offsets[j+1]; ++e_k) {
                     k = gout->nbors[e_k];
-                    local_ret.cycle3 += (local_star2_1[k] * local_star2_2[k]);
-                    local_star2_1[k] = 0;
-                    local_star2_2[k] = 0;
+                    local_ret.cycle3 += (local_star.star2_1[k] * local_star.star2_2[k]);
+                    local_star.star2_1[k] = 0;
+                    local_star.star2_2[k] = 0;
                 }
 
                 for (e_k = gin->offsets[j]; e_k < gin->offsets[j+1]; ++e_k) {
                     k = gin->nbors[e_k];
-                    if (k > i) {local_ret.cycle3 += (local_star2_1[k] * local_star2_2[k]);}
-                    local_star2_1[k] = 0;
-                    local_star2_2[k] = 0;
+                    if (k > i) {
+                        local_ret.cycle3 += (local_star.star2_1[k] * local_star.star2_2[k]);
+                        local_star.star2_1[k] = 0;
+                        local_star.star2_2[k] = 0;
+                    } 
                 }
             }
             
-            delete[] local_star1;
-            delete[] local_star2_1;
-            delete[] local_star2_2;
+            for (e_j = gout->offsets[i]; e_j < gout->offsets[i+1]; ++e_j){
+                j = gout->nbors[e_j];
+                
+                for (e_k = gout_2->offsets[j]; e_k < gout_2->offsets[j+1]; ++e_k) {
+                    k = gout_2->nbors[e_k];
+                    local_star.star2_1[k] = 0;
+                }
 
-            // #pragma omp critical
-            // {
-            //     if (current % 10 == 0){
-            //         printf("Node : %lld / %lld done...\n", current, gout->nVertices);
-            //     }
-            //     current++;
-            // }
+                for (e_k = gin_2->offsets[j]; e_k < gin_2->offsets[j+1]; ++e_k) {
+                    k = gin_2->nbors[e_k];
+                    if (k > i) {    
+                        local_star.star2_1[k] = 0;
+                    }
+                }
+
+            }
+            #pragma omp critical
+            {
+                if (current % 100 == 0){
+                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+                }
+                current++;
+            }
         }
         
 
@@ -634,7 +648,6 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
             ret.path3 += local_ret.path3;
             ret.path4 += local_ret.path4;
         }
-
     }
 
     Count chord1 = 0, chord2 = 0, chord3 = 0, chord4 = 0, chord5 = 0, chord6 = 0, chord7 = 0, chord8 = 0;
@@ -705,7 +718,7 @@ void countThree(CGraph *cg, CDAG *dag, CGraph *cg_2, CDAG *dag_2, double (&mcoun
 void countFour(CDAG *dag, CDAG *dag_2, double (&mcounts)[36]){
     
     FourSizeInfo motifcounts = get4size(&(dag->outlist), &(dag->inlist), &(dag_2->outlist), &(dag_2->inlist));
-
+    
     mcounts[0] = motifcounts.clique1;
     mcounts[1] = motifcounts.clique2;
     mcounts[2] = motifcounts.clique3;

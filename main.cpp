@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <iomanip>
+#include <fstream>
+#include <cstdio> 
 
 using namespace std;
 using namespace std::chrono;
@@ -78,57 +80,62 @@ int main(int argc, char* argv[]) {
     printf("\nMax Degree (2): %lld\n", cg_2.maxDegree);
 
     
-    printf("DAG (Out) ______________________________________________________\n");
-    VertexIdx degree = 0;
-    Count degree_sum = 0;
+    FILE* file = fopen("./degree/temp.txt", "w");
+    VertexIdx degree = 0, degree2 = 0, degree3 = 0, degree4 = 0; 
+    Count degree_sum = 0, degree2_sum = 0, degree3_sum = 0, degree4_sum = 0;
+
+    fprintf(file, "outdeg1 indeg1 totaldeg1 outdeg2 indeg2 totaldeg2 totaldeg\n");
     for (VertexIdx i = 0; i < dag.outlist.nVertices; ++i) {
         VertexIdx off = dag.outlist.offsets[i+1] - dag.outlist.offsets[i];
         degree_sum += off;
         if (off > degree){
             degree = off;
         }
-    }
-    printf("Average Degree : %.lld\n", degree_sum / dag.outlist.nVertices);
-    printf("Max Degreee : %lld\n", degree);
 
-    printf("DAG (in) ______________________________________________________\n");
-    VertexIdx degree2 = 0;
-    Count degree2_sum = 0;
-    for (VertexIdx i = 0; i < dag.inlist.nVertices; ++i) {
         VertexIdx off2 = dag.inlist.offsets[i+1] - dag.inlist.offsets[i];
         degree2_sum += off2;
         if (off2 > degree2){
             degree2 = off2;
         }
-    }
-    printf("Average Degree : %.lld\n", degree2_sum / dag.inlist.nVertices);
-    printf("Max Degree : %lld\n", degree2);
 
-    printf("DAG 2 (Out) ______________________________________________________\n");
-    VertexIdx degree3 = 0;
-    Count degree3_sum = 0;
-    for (VertexIdx i = 0; i < dag_2.outlist.nVertices; ++i) {
         VertexIdx off3 = dag_2.outlist.offsets[i+1] - dag_2.outlist.offsets[i];
         degree3_sum += off3;
         if (off3 > degree3){
             degree3 = off3;
         }
-    }
-    printf("Average Degree : %.lld\n", degree3_sum / dag_2.outlist.nVertices);
-    printf("Max Degree : %lld\n", degree3);
 
-    printf("DAG 2 (in) ______________________________________________________\n");
-    VertexIdx degree4 = 0;
-    Count degree4_sum = 0;
-    for (VertexIdx i = 0; i < dag_2.inlist.nVertices; ++i) {
         VertexIdx off4 = dag_2.inlist.offsets[i+1] - dag_2.inlist.offsets[i];
         degree4_sum += off4;
         if (off4 > degree4){
             degree4 = off4;
         }
+
+        VertexIdx total_off1 = off + off2;
+        VertexIdx total_off2 = off3 + off4;
+        VertexIdx total_off = total_off1 + total_off2;
+        fprintf(file, "%lld %lld %lld %lld %lld %lld %lld\n", off, off2, total_off1, off3, off4, total_off2, total_off);
     }
+    fclose(file);
+    printf("DAG (Out) ______________________________________________________\n");
+    
+    printf("Average Degree : %.lld\n", degree_sum / dag.outlist.nVertices);
+    printf("Max Degreee : %lld\n", degree);
+
+    printf("DAG (in) ______________________________________________________\n");
+   
+    printf("Average Degree : %.lld\n", degree2_sum / dag.inlist.nVertices);
+    printf("Max Degree : %lld\n", degree2);
+
+    printf("DAG 2 (Out) ______________________________________________________\n");
+
+    printf("Average Degree : %.lld\n", degree3_sum / dag_2.outlist.nVertices);
+    printf("Max Degree : %lld\n", degree3);
+
+    printf("DAG 2 (in) ______________________________________________________\n");
+
     printf("Average Degree : %.lld\n", degree4_sum / dag_2.inlist.nVertices);
     printf("Max Degree : %lld\n", degree4);
+
 
     #ifdef PRINT_CSR
 

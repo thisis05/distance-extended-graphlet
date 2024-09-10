@@ -597,13 +597,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
                 }
 
             }
-            #pragma omp critical
-            {
-                if (current % 100 == 0){
-                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
-                }
-                current++;
-            }
+            // #pragma omp critical
+            // {
+            //     if (current % 100 == 0){
+            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+            //     }
+            //     current++;
+            // }
         }
         
 

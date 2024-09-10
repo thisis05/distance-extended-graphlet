@@ -80,11 +80,11 @@ int main(int argc, char* argv[]) {
     printf("\nMax Degree (2): %lld\n", cg_2.maxDegree);
 
     
-    FILE* file = fopen("./degree/temp.txt", "w");
+    //FILE* file = fopen("./degree/temp.txt", "w");
     VertexIdx degree = 0, degree2 = 0, degree3 = 0, degree4 = 0; 
     Count degree_sum = 0, degree2_sum = 0, degree3_sum = 0, degree4_sum = 0;
 
-    fprintf(file, "outdeg1 indeg1 totaldeg1 outdeg2 indeg2 totaldeg2 totaldeg\n");
+    //fprintf(file, "outdeg1 indeg1 totaldeg1 outdeg2 indeg2 totaldeg2 totaldeg\n");
     for (VertexIdx i = 0; i < dag.outlist.nVertices; ++i) {
         VertexIdx off = dag.outlist.offsets[i+1] - dag.outlist.offsets[i];
         degree_sum += off;
@@ -113,9 +113,9 @@ int main(int argc, char* argv[]) {
         VertexIdx total_off1 = off + off2;
         VertexIdx total_off2 = off3 + off4;
         VertexIdx total_off = total_off1 + total_off2;
-        fprintf(file, "%lld %lld %lld %lld %lld %lld %lld\n", off, off2, total_off1, off3, off4, total_off2, total_off);
+        //fprintf(file, "%lld %lld %lld %lld %lld %lld %lld\n", off, off2, total_off1, off3, off4, total_off2, total_off);
     }
-    fclose(file);
+    //fclose(file);
     printf("DAG (Out) ______________________________________________________\n");
     
     printf("Average Degree : %.lld\n", degree_sum / dag.outlist.nVertices);

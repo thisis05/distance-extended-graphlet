@@ -95,18 +95,16 @@ int main(int argc, char* argv[]) {
             }
             file_count++;
         }
-
-        printf("===================================================\n");
-        printf("Total Graphlet Average Count\n");
-        for (int i = 0; i < 6; ++i){
-            printf("\"T%d\" : %.1f,\n", i+1, mcounts[i] / file_count);
-        }   
-
-        for (int i = 6; i < 41; ++i){
-            printf("\"Q%d\" : %.1f,\n", i-5, mcounts[i] / file_count);
-        }
-        printf("\"Q36\" : %.1f\n", mcounts[41] / file_count);
-
     }
+    printf("===================================================\n");
+    printf("Total Graphlet Average Count\n");
+    for (int i = 0; i < 6; ++i){
+        printf("\"T%d\" : %.1f,\n", i+1, mcounts[i] / file_count);
+    }   
+
+    for (int i = 6; i < 41; ++i){
+        printf("\"Q%d\" : %.1f,\n", i-5, mcounts[i] / file_count);
+    }
+    printf("\"Q36\" : %.1f\n", mcounts[41] / file_count);
     return 0;
 }

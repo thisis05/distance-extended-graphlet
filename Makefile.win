@@ -1,7 +1,7 @@
 LLVM_DIR = C:/Program Files/LLVM
 OPENMP_LIB ?= 1
 
-all: main.exe
+all: main.exe main_random.exe
 
 CXXFLAGS = -O3 -g -std=c++17
 ifeq ($(OPENMP_LIB),1)
@@ -16,6 +16,9 @@ CXX = "$(LLVM_DIR)/bin/clang++"
 main.exe: main.cpp graph.cpp digraph.cpp counter.cpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main.exe main.cpp graph.cpp digraph.cpp counter.cpp
 
+main_random.exe: main_random.cpp graph.cpp digraph.cpp counter.cpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main_random.exe main_random.cpp graph.cpp digraph.cpp counter.cpp
+
 clean:
 	@echo "Removing executables"
-	del main.exe
+	del main.exe main_random.exe

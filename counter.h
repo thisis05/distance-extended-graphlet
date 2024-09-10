@@ -90,3 +90,5 @@ void countThree(CGraph *cg, CDAG *dag, CGraph *cg_2, CDAG *dag_2, double (&mcoun
 void countFour(CDAG *dag, CDAG *dag_2, double (&mcounts)[36]);
 void mEquation3(double (&mcounts)[6]);
 void mEquation4(double (&mcounts)[36]);
+void print3size(double (&mcounts)[6]);
+void print4size(double (&mcounts)[36]);

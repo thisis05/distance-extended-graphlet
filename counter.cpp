@@ -598,13 +598,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
 
             }
 
-            // #pragma omp critical
-            // {
-            //     if (current % 100 == 0){
-            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
-            //     }
-            //     current++;
-            // }
+            #pragma omp critical
+            {
+                if (current % 100 == 0){
+                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+                }
+                current++;
+            }
         }
         
 
@@ -707,13 +707,13 @@ void countThree(CGraph *cg, CDAG *dag, CGraph *cg_2, CDAG *dag_2, double (&mcoun
         t3 += deg * (deg-1) / 2; 
     }
 
-    mcounts[0] = w1;
-    mcounts[1] = w2;
-    mcounts[4] = t3;
+    mcounts[4] = w1;
+    mcounts[5] = w2;
+    mcounts[2] = t3;
     ThreeSizeInfo tricount = get3size(&(dag->outlist), &(dag_2->outlist));
-    mcounts[2] = tricount.tri1;
-    mcounts[3] = tricount.tri2;
-    mcounts[5] = tricount.tri4;
+    mcounts[0] = tricount.tri1;
+    mcounts[1] = tricount.tri2;
+    mcounts[3] = tricount.tri4;
 }
 
 void countFour(CDAG *dag, CDAG *dag_2, double (&mcounts)[36]){
@@ -741,12 +741,12 @@ void countFour(CDAG *dag, CDAG *dag_2, double (&mcounts)[36]){
 void mEquation3(double (&mcounts)[6]){
     double t[6];
 
-    t[2] = mcounts[2];
+    t[0] = mcounts[0];
+    t[1] = mcounts[1];
+    t[2] = mcounts[2] - 3*mcounts[3];
     t[3] = mcounts[3];
-    t[4] = mcounts[4] - 3*mcounts[5];
-    t[5] = mcounts[5];
-    t[0] = mcounts[0] - 3 * t[2] - t[3];
-    t[1] = mcounts[1] - 2*t[3] - 2 * t[4];
+    t[4] = mcounts[4] - 3 * t[0] - t[1];
+    t[5] = mcounts[5] - 2*t[1] - 2 * t[2];
 
     for (int m = 0; m < 36; ++m){
         mcounts[m] = t[m];

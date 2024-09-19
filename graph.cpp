@@ -51,7 +51,7 @@ CGraph makeCSR(Graph& g){
     {
         auto src = tmpG.srcs[i];
         while (cv <= src)
-        ret.offsets[cv++] = i;
+            ret.offsets[cv++] = i;
     }
     while (cv <= g.nVertices)
         ret.offsets[cv++] = g.nEdges;
@@ -59,6 +59,15 @@ CGraph makeCSR(Graph& g){
     delete[] tmpG.srcs; //we retain tmpG.dsts in the output
 
     ret.sortById();
+
+    VertexIdx maxDegree = 0;
+    for (VertexIdx v = 0; v < ret.nVertices; ++v) {
+        VertexIdx degree = ret.offsets[v + 1] - ret.offsets[v];
+        if (degree > maxDegree) {
+            maxDegree = degree;
+        }
+    }
+    ret.maxDegree = maxDegree;
 
     return ret;
 }
@@ -189,7 +198,7 @@ CGraph CGraph::reMapping(VertexIdx *mapping, VertexIdx *inverse) const{
 
 CGraph CGraph::getE2() const {
     
-    CGraph ret = newCGraph(nVertices, nEdges * 200); // worst case
+    CGraph ret = newCGraph(nVertices, (nEdges * 300)); // worst case
     EdgeIdx current = 0;
     int64_t cur_maxDegree = 0;
     int64_t new_maxDegree = 0;

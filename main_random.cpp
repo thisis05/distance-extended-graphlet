@@ -63,15 +63,15 @@ int main(int argc, char* argv[]) {
 
             
             // 1. Count 3-size d-Motifs
-            double mcounts3[6];
-            printf("Count d-Motifs (3-size)\n");
-            auto start_time2 = high_resolution_clock::now();
-            countThree(&cg, &dag, &cg_2, &dag_2, mcounts3);
-            auto end_time2 = high_resolution_clock::now();
-            auto duration2 = duration_cast<milliseconds>(end_time2 - start_time2);
-            double seconds2 = duration2.count() / 1000.0; // Convert milliseconds to seconds
-            printf("Execution time for Counting Motifs (3-size): %.3f\n", seconds2);
-            mEquation3(mcounts3);
+            // double mcounts3[6];
+            // printf("Count d-Motifs (3-size)\n");
+            // auto start_time2 = high_resolution_clock::now();
+            // countThree(&cg, &dag, &cg_2, &dag_2, mcounts3);
+            // auto end_time2 = high_resolution_clock::now();
+            // auto duration2 = duration_cast<milliseconds>(end_time2 - start_time2);
+            // double seconds2 = duration2.count() / 1000.0; // Convert milliseconds to seconds
+            // printf("Execution time for Counting Motifs (3-size): %.3f\n", seconds2);
+            // mEquation3(mcounts3);
 
             // 2. Count 4-size d-Motifs
             double mcounts4[36];
@@ -84,12 +84,13 @@ int main(int argc, char* argv[]) {
             printf("Execution time for Counting Motifs (4-size): %.3f\n", seconds3);
             mEquation4(mcounts4);
 
-            printf("Total Execution time for 3-size: %.3f\n", seconds1 + seconds2);
+            //printf("Total Execution time for 3-size: %.3f\n", seconds1 + seconds2);
             printf("Total Execution time for 4-size: %.3f\n", seconds1 + seconds3);
 
             for (int m = 0; m < 42; ++m){
                 if (m < 6)
-                    mcounts[m] += mcounts3[m];
+                    continue;
+                    //mcounts[m] += mcounts3[m];
                 else
                     mcounts[m] += mcounts4[m-6];
             }
@@ -98,9 +99,9 @@ int main(int argc, char* argv[]) {
     }
     printf("===================================================\n");
     printf("Total Graphlet Average Count\n");
-    for (int i = 0; i < 6; ++i){
-        printf("\"T%d\" : %.1f,\n", i+1, mcounts[i] / file_count);
-    }   
+    // for (int i = 0; i < 6; ++i){
+    //     printf("\"T%d\" : %.1f,\n", i+1, mcounts[i] / file_count);
+    // }   
 
     for (int i = 6; i < 41; ++i){
         printf("\"Q%d\" : %.1f,\n", i-5, mcounts[i] / file_count);

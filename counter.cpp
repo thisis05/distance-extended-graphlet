@@ -17,10 +17,12 @@
 using namespace std;
 using namespace std::chrono;
 
+int num_threads = 6;
 ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 
+    omp_set_num_threads(num_threads);
     ThreeSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
-
+    VertexIdx current = 0;
     #pragma omp parallel
     {
         ThreeSizeInfo local_ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
@@ -82,6 +84,13 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
                         }
                     }
                 }
+            }
+            #pragma omp critical
+            {
+                if (current % 100 == 0){
+                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
+                }
+                current++;
             }       
         }
 
@@ -100,7 +109,7 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) {
 
     FourSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
-    const Count num_threads = omp_get_max_threads();
+    //const Count num_threads = omp_get_max_threads();
     //printf("# thread : %lld\n", num_threads);
 
     Count current = 0;

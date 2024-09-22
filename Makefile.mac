@@ -1,7 +1,7 @@
 LLVM_DIR = /opt/homebrew/opt/llvm
 OPENMP_LIB ?= 1
 
-all: main
+all: main main_random
 
 CXXFLAGS = -O3 -g -std=c++17
 ifeq ($(OPENMP_LIB),1)
@@ -16,6 +16,9 @@ CXX = $(LLVM_DIR)/bin/clang++
 main: main.cpp graph.cpp digraph.cpp counter.cpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main main.cpp graph.cpp digraph.cpp counter.cpp
 
+main_random: main_random.cpp graph.cpp digraph.cpp counter.cpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main_random main_random.cpp graph.cpp digraph.cpp counter.cpp
+
 clean:
 	@echo "Removing executables"
-	rm -f main
+	rm -f main main_random

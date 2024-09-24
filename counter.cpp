@@ -55,8 +55,8 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 
                 for (EdgeIdx k = start_2; k < end_2; ++k) {
                     const VertexIdx end2 = gout_2->nbors[k];
-                    EdgeIdx loc221 = end1 > end2 ? gout_2->getEdgeBinary(end2, end1) : gout_2->getEdgeBinary(end1, end2);
-                    if (loc221 != -1) {
+                    EdgeIdx loc122 = end1 > end2 ? gout_2->getEdgeBinary(end2, end1) : gout_2->getEdgeBinary(end1, end2);
+                    if (loc122 != -1) {
                         local_ret.tri2++;
                     }
                 }                 
@@ -85,13 +85,13 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
                     }
                 }
             }
-            #pragma omp critical
-            {
-                if (current % 100 == 0){
-                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
-                }
-                current++;
-            }       
+            // #pragma omp critical
+            // {
+            //     if (current % 100 == 0){
+            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
+            //     }
+            //     current++;
+            // }       
         }
 
         #pragma omp critical
@@ -607,13 +607,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
 
             }
 
-            #pragma omp critical
-            {
-                if (current % 100 == 0){
-                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
-                }
-                current++;
-            }
+            // #pragma omp critical
+            // {
+            //     if (current % 100 == 0){
+            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+            //     }
+            //     current++;
+            // }
         }
         
 
@@ -755,7 +755,7 @@ void mEquation3(double (&mcounts)[6]){
     t[2] = mcounts[2] - 3*mcounts[3];
     t[3] = mcounts[3];
     t[4] = mcounts[4] - 3 * t[0] - t[1];
-    t[5] = mcounts[5] - 2*t[1] - 2 * t[2];
+    t[5] = mcounts[5] - 2 * t[1] - 2 * t[2];
 
     for (int m = 0; m < 36; ++m){
         mcounts[m] = t[m];

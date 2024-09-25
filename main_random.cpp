@@ -101,7 +101,6 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 6; ++i){
         printf("\"T%d\" : %.1f,\n", i+1, mcounts[i] / file_count);
     }   
-
     for (int i = 6; i < 41; ++i){
         printf("\"Q%d\" : %.1f,\n", i-5, mcounts[i] / file_count);
     }

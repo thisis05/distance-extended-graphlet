@@ -239,6 +239,48 @@ CGraph CGraph::getE2() const {
     return ret;
 }
 
+CGraph CGraph::getE3() const {
+    
+    CGraph ret = newCGraph(nVertices, (nEdges * 300)); // worst case
+    EdgeIdx current = 0;
+    int64_t cur_maxDegree = 0;
+    int64_t new_maxDegree = 0;
+    
+    
+    ret.offsets[0] = 0;
+    for (VertexIdx start = 0; start < nVertices; start++) {
+        // vector<bool> check : index is VertexIdx, check whether the node was already visited for e2.
+        std::vector<bool> check(nVertices, false);
+
+        for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
+            VertexIdx nbr = nbors[idx];
+            for (EdgeIdx idx2 = offsets[nbr]; idx2 < offsets[nbr + 1]; idx2++) {
+                VertexIdx final = nbors[idx2];
+                if (start != final && !check[final] && getEdgeBinary(start, final) == -1) {
+                    check[final] = true;
+                    ret.nbors[current++] = final;
+                }
+            }
+        }
+        // if (start % 10000 == 0) {
+        //     printf("Completed Node: %lld / %lld\n", start, nVertices);
+        // }
+
+        ret.offsets[start + 1] = current;
+        new_maxDegree = ret.degree(start);
+        if (cur_maxDegree < new_maxDegree){
+            cur_maxDegree = new_maxDegree;
+        }
+    }
+
+    
+    ret.nEdges = current;
+    ret.nbors = (VertexIdx*)realloc(ret.nbors, current * sizeof(VertexIdx));
+    ret.maxDegree = cur_maxDegree;
+    
+    return ret;
+}
+
 EdgeIdx CGraph::getEdgeBinary(VertexIdx v1, VertexIdx v2) const
 {
     if (v1 >= nVertices)

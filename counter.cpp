@@ -17,7 +17,7 @@
 using namespace std;
 using namespace std::chrono;
 
-int num_threads = 11;
+int num_threads = 6;
 ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
 
     omp_set_num_threads(num_threads);
@@ -85,13 +85,13 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
                     }
                 }
             }
-            #pragma omp critical
-            {
-                if (current % 1000 == 0){
-                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
-                }
-                current++;
-            }       
+            // #pragma omp critical
+            // {
+            //     if (current % 1000 == 0){
+            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
+            //     }
+            //     current++;
+            // }       
         }
 
         #pragma omp critical
@@ -607,13 +607,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
 
             }
 
-            #pragma omp critical
-            {
-                if (current % 1000 == 0){
-                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
-                }
-                current++;
-            }
+            // #pragma omp critical
+            // {
+            //     if (current % 1000 == 0){
+            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+            //     }
+            //     current++;
+            // }
         }
         
 

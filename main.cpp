@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
         cerr << "Usage: " << argv[0] << " <input_file>" << endl;
         return 1;
     }
+
     string filename = argv[1];
     Graph g;
     printf("Read Graph\n");
@@ -22,19 +23,43 @@ int main(int argc, char* argv[]) {
 
     printf("Loaded graph\n");
     CGraph pre_cg = makeCSR(g);
+    pre_cg.sortById();
     printf("Converted to CSR\n");
 
     auto start_time1 = high_resolution_clock::now();
 
     printf("Get Edge set with distance 2\n");
     CGraph pre_cg_2 = pre_cg.getE2();
-    CGraph cg_2 = pre_cg_2.renameByDegreeOrder();
-    cg_2.sortById();
 
     auto end_time1 = high_resolution_clock::now();
     auto duration1 = duration_cast<milliseconds>(end_time1 - start_time1);
     double seconds1 = duration1.count() / 1000.0; // Convert milliseconds to seconds
     printf("Execution time for get E2:  %.3f\n", seconds1);
+    CGraph cg_2 = pre_cg_2.renameByDegreeOrder();
+    cg_2.sortById();
+    
+    // //Get E3
+    // auto start_time1_1 = high_resolution_clock::now();
+
+    // printf("Get Edge set with distance 3\n");
+    // CGraph pre_cg_3 = cg_2.getE3(pre_cg);
+    
+    // auto end_time1_1 = high_resolution_clock::now();
+    // auto duration1_1 = duration_cast<milliseconds>(end_time1_1 - start_time1_1);
+    // double seconds1_1 = duration1_1.count() / 1000.0; // Convert milliseconds to seconds
+    // printf("Execution time for get E3:  %.3f\n", seconds1_1);
+
+    // //Get E4
+    // auto start_time1_2 = high_resolution_clock::now();
+
+    // printf("Get Edge set with distance 4\n");
+    // CGraph pre_cg_4 = pre_cg_3.getE4(pre_cg, pre_cg_2);
+
+    // auto end_time1_2 = high_resolution_clock::now();
+    // auto duration1_2 = duration_cast<milliseconds>(end_time1_2 - start_time1_2);
+    // double seconds1_2 = duration1_2.count() / 1000.0; // Convert milliseconds to seconds
+    // printf("Execution time for get E4:  %.3f\n", seconds1_2);
+    
 
     printf("Creating DAG\n");
     CGraph cg = pre_cg.reMapping(cg_2.mapping, cg_2.inverse);
@@ -49,7 +74,7 @@ int main(int argc, char* argv[]) {
     (dag.inlist).sortById();
 
     
-    // 1. Count 3-size d-Motifs
+    //1. Count 3-size d-Motifs
     double mcounts3[6];
     printf("Count d-Motifs (3-size)\n");
     auto start_time2 = high_resolution_clock::now();
@@ -82,8 +107,12 @@ int main(int argc, char* argv[]) {
 
     printf("# of Edge (1): %lld", cg.nEdges / 2);
     printf("\n# of Edge (2): %lld", cg_2.nEdges / 2);
+    // printf("\n# of Edge (3): %lld", pre_cg_3.nEdges / 2);
+    // printf("\n# of Edge (4): %lld", pre_cg_4.nEdges / 2);
     printf("\nMax Degree (1): %lld", cg.maxDegree);
-    printf("\nMax Degree (2): %lld\n", cg_2.maxDegree);
+    printf("\nMax Degree (2): %lld", cg_2.maxDegree);
+    // printf("\nMax Degree (3): %lld", pre_cg_3.maxDegree);
+    // printf("\nMax Degree (4): %lld\n", pre_cg_4.maxDegree);
 
     
     //FILE* file = fopen("./degree/temp.txt", "w");

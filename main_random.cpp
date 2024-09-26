@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
 
             printf("Loaded graph\n");
             CGraph pre_cg = makeCSR(g);
+            pre_cg.sortById();
             printf("Converted to CSR\n");
 
             auto start_time1 = high_resolution_clock::now();

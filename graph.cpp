@@ -203,8 +203,6 @@ CGraph CGraph::getE2() const {
     int64_t cur_maxDegree = 0;
     int64_t new_maxDegree = 0;
     
-    
-    
     ret.offsets[0] = 0;
     for (VertexIdx start = 0; start < nVertices; start++) {
         // vector<bool> check : index is VertexIdx, check whether the node was already visited for e2.
@@ -212,26 +210,27 @@ CGraph CGraph::getE2() const {
 
         for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
             VertexIdx nbr = nbors[idx];
+            check[nbr] = true;
+        }
+
+        for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
+            VertexIdx nbr = nbors[idx];
             for (EdgeIdx idx2 = offsets[nbr]; idx2 < offsets[nbr + 1]; idx2++) {
                 VertexIdx final = nbors[idx2];
-                if (start != final && !check[final] && getEdgeBinary(start, final) == -1) {
+                if (start != final && !check[final]) {
                     check[final] = true;
                     ret.nbors[current++] = final;
                 }
             }
         }
-        // if (start % 10000 == 0) {
-        //     printf("Completed Node: %lld / %lld\n", start, nVertices);
-        // }
-
         ret.offsets[start + 1] = current;
         new_maxDegree = ret.degree(start);
         if (cur_maxDegree < new_maxDegree){
             cur_maxDegree = new_maxDegree;
         }
+
     }
 
-    
     ret.nEdges = current;
     ret.nbors = (VertexIdx*)realloc(ret.nbors, current * sizeof(VertexIdx));
     ret.maxDegree = cur_maxDegree;
@@ -239,7 +238,7 @@ CGraph CGraph::getE2() const {
     return ret;
 }
 
-CGraph CGraph::getE3() const {
+CGraph CGraph::getE3(CGraph G1) const {
     
     CGraph ret = newCGraph(nVertices, (nEdges * 300)); // worst case
     EdgeIdx current = 0;
@@ -252,11 +251,21 @@ CGraph CGraph::getE3() const {
         // vector<bool> check : index is VertexIdx, check whether the node was already visited for e2.
         std::vector<bool> check(nVertices, false);
 
+        for (EdgeIdx idx = G1.offsets[start]; idx < G1.offsets[start + 1]; idx++) {
+            VertexIdx nbr = G1.nbors[idx];
+            check[nbr] = true;
+        }
+
+        for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
+            VertexIdx nbr = nbors[idx];
+            check[nbr] = true;
+        }
+
         for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
             VertexIdx nbr = nbors[idx];
             for (EdgeIdx idx2 = offsets[nbr]; idx2 < offsets[nbr + 1]; idx2++) {
                 VertexIdx final = nbors[idx2];
-                if (start != final && !check[final] && getEdgeBinary(start, final) == -1) {
+                if (start != final && !check[final]) {
                     check[final] = true;
                     ret.nbors[current++] = final;
                 }
@@ -273,11 +282,67 @@ CGraph CGraph::getE3() const {
         }
     }
 
-    
     ret.nEdges = current;
     ret.nbors = (VertexIdx*)realloc(ret.nbors, current * sizeof(VertexIdx));
     ret.maxDegree = cur_maxDegree;
+
+    return ret;
+}
+
+CGraph CGraph::getE4(CGraph G1, CGraph G2) const {
     
+    CGraph ret = newCGraph(nVertices, (nEdges * 70)); // worst case
+    printf("done?\n");
+    EdgeIdx current = 0;
+    int64_t cur_maxDegree = 0;
+    int64_t new_maxDegree = 0;
+    
+    
+    ret.offsets[0] = 0;
+    for (VertexIdx start = 0; start < nVertices; start++) {
+        // vector<bool> check : index is VertexIdx, check whether the node was already visited for e2.
+        std::vector<bool> check(nVertices, false);
+
+        for (EdgeIdx idx = G1.offsets[start]; idx < G1.offsets[start + 1]; idx++) {
+            VertexIdx nbr = G1.nbors[idx];
+            check[nbr] = true;
+        }
+
+        for (EdgeIdx idx = G2.offsets[start]; idx < G2.offsets[start + 1]; idx++) {
+            VertexIdx nbr = G2.nbors[idx];
+            check[nbr] = true;
+        }
+
+        for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
+            VertexIdx nbr = nbors[idx];
+            check[nbr] = true;
+        }
+
+        for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
+            VertexIdx nbr = nbors[idx];
+            for (EdgeIdx idx2 = offsets[nbr]; idx2 < offsets[nbr + 1]; idx2++) {
+                VertexIdx final = nbors[idx2];
+                if (start != final && !check[final]) {
+                    check[final] = true;
+                    ret.nbors[current++] = final;
+                }
+            }
+        }
+        // if (start % 10000 == 0) {
+        //     printf("Completed Node: %lld / %lld\n", start, nVertices);
+        // }
+
+        ret.offsets[start + 1] = current;
+        new_maxDegree = ret.degree(start);
+        if (cur_maxDegree < new_maxDegree){
+            cur_maxDegree = new_maxDegree;
+        }
+    }
+
+    ret.nEdges = current;
+    ret.nbors = (VertexIdx*)realloc(ret.nbors, current * sizeof(VertexIdx));
+    ret.maxDegree = cur_maxDegree;
+
     return ret;
 }
 

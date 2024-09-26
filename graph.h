@@ -37,7 +37,8 @@ struct CGraph
   CGraph reMapping(VertexIdx *mapping, VertexIdx *inverse) const;
   void sortById() const;
   CGraph getE2() const;
-  CGraph getE3() const;
+  CGraph getE3(CGraph G1) const;
+  CGraph getE4(CGraph G1, CGraph G2) const;
   EdgeIdx getEdgeBinary(VertexIdx v1, VertexIdx v2) const;
   EdgeIdx degree(VertexIdx v) const {return offsets[v + 1] - offsets[v]; }
   bool isEdgeBinary(VertexIdx v1, VertexIdx v2) const;

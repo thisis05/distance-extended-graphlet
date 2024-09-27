@@ -35,9 +35,7 @@ int main(int argc, char* argv[]) {
     auto duration1 = duration_cast<milliseconds>(end_time1 - start_time1);
     double seconds1 = duration1.count() / 1000.0; // Convert milliseconds to seconds
     printf("Execution time for get E2:  %.3f\n", seconds1);
-    CGraph cg_2 = pre_cg_2.renameByDegreeOrder();
-    cg_2.sortById();
-    
+    /*
     // //Get E3
     // auto start_time1_1 = high_resolution_clock::now();
 
@@ -59,9 +57,11 @@ int main(int argc, char* argv[]) {
     // auto duration1_2 = duration_cast<milliseconds>(end_time1_2 - start_time1_2);
     // double seconds1_2 = duration1_2.count() / 1000.0; // Convert milliseconds to seconds
     // printf("Execution time for get E4:  %.3f\n", seconds1_2);
-    
+    */
 
     printf("Creating DAG\n");
+    CGraph cg_2 = pre_cg_2.renameByDegreeOrder();
+    cg_2.sortById();
     CGraph cg = pre_cg.reMapping(cg_2.mapping, cg_2.inverse);
     cg.sortById();
 

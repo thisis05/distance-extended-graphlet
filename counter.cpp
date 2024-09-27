@@ -105,94 +105,6 @@ ThreeSizeInfo get3size(CGraph *gout, CGraph *gout_2) {
     return ret;
 }
 
-ThreeSizeInfo get3size_3hop(CGraph *gout, CGraph *gout_2, CGraph *gout_3) {
-
-    omp_set_num_threads(num_threads);
-    ThreeSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
-    VertexIdx current = 0;
-    #pragma omp parallel
-    {
-        ThreeSizeInfo local_ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
-        
-        #pragma omp for schedule(guided)
-        for (VertexIdx i = 0; i < gout->nVertices; ++i) {
-            const EdgeIdx start = gout->offsets[i];
-            const EdgeIdx end = gout->offsets[i+1];
-            const EdgeIdx start_2 = gout_2->offsets[i];
-            const EdgeIdx end_2 = gout_2->offsets[i+1];
-            
-            for (EdgeIdx j = start; j < end; ++j) {
-                const VertexIdx end1 = gout->nbors[j];
-                
-                // Tri4 : i < j < k (1, 1, 1)
-                //        i->j : 1, i->k : 1, j->k : 1
-                
-                for (EdgeIdx k = j+1; k < end; ++k) {
-                    const VertexIdx end2 = gout->nbors[k];
-                    
-                    EdgeIdx loc_111 = gout->getEdgeBinary(end1, end2);
-                    if (loc_111 != -1) {
-                        local_ret.tri4++;
-                    }
-                }
-
-                // Tri2 : i < j < k 
-                //    (1) i->j : 2, i->k : 1, j->k : 2
-                //    (2) i->j : 1, i->k : 2, j->k : 2  
-
-                for (EdgeIdx k = start_2; k < end_2; ++k) {
-                    const VertexIdx end2 = gout_2->nbors[k];
-                    EdgeIdx loc122 = end1 > end2 ? gout_2->getEdgeBinary(end2, end1) : gout_2->getEdgeBinary(end1, end2);
-                    if (loc122 != -1) {
-                        local_ret.tri2++;
-                    }
-                }                 
-            }
-
-            for (EdgeIdx j = start_2; j < end_2; ++j) {
-                const VertexIdx end1 = gout_2->nbors[j];
-                for (EdgeIdx k = j+1; k < end_2; ++k) {
-                    const VertexIdx end2 = gout_2->nbors[k];
-
-                    // Tri4 : i < j < k 
-                    //    (3) i->j : 2, i->k : 2, j->k : 2
-
-                    EdgeIdx loc_222 = gout_2->getEdgeBinary(end1, end2);
-                    if (loc_222 != -1) {
-                        local_ret.tri1++;
-                    } else {
-                        
-                        // Tri2 : i < j < k 
-                        //    (3) i->j : 2, i->k : 2, j->k : 1
-
-                        EdgeIdx loc_221 = gout->getEdgeBinary(end1, end2);
-                        if (loc_221 != -1) {
-                            local_ret.tri2++;
-                        }
-                    }
-                }
-            }
-            // #pragma omp critical
-            // {
-            //     if (current % 1000 == 0){
-            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i));
-            //     }
-            //     current++;
-            // }       
-        }
-
-        #pragma omp critical
-        {
-            ret.tri1 += local_ret.tri1;
-            ret.tri2 += local_ret.tri2;
-            ret.tri4 += local_ret.tri4;
-        }
-    }
-
-    return ret;
-}
-
-
 FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) {
 
     FourSizeInfo ret (gout->nVertices, gout->nEdges, gout_2->nEdges);
@@ -694,13 +606,13 @@ FourSizeInfo get4size(CGraph *gout, CGraph *gin, CGraph *gout_2, CGraph *gin_2) 
 
             }
 
-            // #pragma omp critical
-            // {
-            //     if (current % 1000 == 0){
-            //         printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
-            //     }
-            //     current++;
-            // }
+            #pragma omp critical
+            {
+                if (current % 1000 == 0){
+                    printf("Node : %lld / %lld done... (node idx : %lld / out degree : %lld / in degree : %lld)\n", current, gout->nVertices, i, gout_2->degree(i), gin_2->degree(i));
+                }
+                current++;
+            }
         }
         
 

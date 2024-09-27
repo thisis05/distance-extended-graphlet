@@ -19,22 +19,6 @@ struct ThreeSizeInfo {
 
 };
 
-struct ThreeSizeInfo_3hop {
-    Count tri1;
-    Count tri2;
-    Count tri3;
-    Count tri4;
-    Count tri5;
-    Count tri6;
-    Count tri7;
-    Count tri8;
-    Count tri9;
-    
-    ThreeSizeInfo(VertexIdx nVertices, EdgeIdx nEdges, EdgeIdx nEdges2) 
-        : tri1(0), tri2(0), tri3(0), tri4(0) tri5(0), tri6(0), tri7(0), tri8(0) tri9(0){}
-
-};
-
 struct TriangleInfo {
     VertexIdx* triend;
     Count count;

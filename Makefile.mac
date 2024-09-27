@@ -1,7 +1,7 @@
 LLVM_DIR = /opt/homebrew/opt/llvm
 OPENMP_LIB ?= 1
 
-all: main main_random
+all: main main_random s3_h3
 
 CXXFLAGS = -O3 -g -std=c++17
 ifeq ($(OPENMP_LIB),1)
@@ -18,6 +18,9 @@ main: main.cpp graph.cpp digraph.cpp counter.cpp
 
 main_random: main_random.cpp graph.cpp digraph.cpp counter.cpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o main_random main_random.cpp graph.cpp digraph.cpp counter.cpp
+
+s3_h3: s3_h3.cpp graph.cpp digraph.cpp counter_3h.cpp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o s3_h3 s3_h3.cpp graph.cpp digraph.cpp counter_3h.cpp
 
 clean:
 	@echo "Removing executables"

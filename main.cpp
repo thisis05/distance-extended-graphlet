@@ -107,12 +107,9 @@ int main(int argc, char* argv[]) {
 
     printf("# of Edge (1): %lld", cg.nEdges / 2);
     printf("\n# of Edge (2): %lld", cg_2.nEdges / 2);
-    // printf("\n# of Edge (3): %lld", pre_cg_3.nEdges / 2);
-    // printf("\n# of Edge (4): %lld", pre_cg_4.nEdges / 2);
+
     printf("\nMax Degree (1): %lld", cg.maxDegree);
     printf("\nMax Degree (2): %lld", cg_2.maxDegree);
-    // printf("\nMax Degree (3): %lld", pre_cg_3.maxDegree);
-    // printf("\nMax Degree (4): %lld\n", pre_cg_4.maxDegree);
 
     
     //FILE* file = fopen("./degree/temp.txt", "w");

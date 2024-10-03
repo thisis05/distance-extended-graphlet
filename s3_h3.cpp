@@ -77,34 +77,33 @@ int main(int argc, char* argv[]) {
     (dag_2.outlist).sortById();
     (dag_2.inlist).sortById();
 
-    CDAG dag = degreeOrdered2(&cg, &cg_2);
+    CDAG dag = degreeOrdered2(&cg, &cg_3);
     (dag.outlist).sortById();
     (dag.inlist).sortById();
 
     
     //1. Count 3-size d-Motifs
-    double mcounts3[6];
+    double mcounts3[13];
     printf("Count d-Motifs (3-size)\n");
     auto start_time2 = high_resolution_clock::now();
-    countThree(&cg, &dag, &cg_2, &dag_2, mcounts3);
+    countThree(&cg, &dag, &cg_2, &dag_2, &cg_3, &dag_3, mcounts3);
     auto end_time2 = high_resolution_clock::now();
     auto duration2 = duration_cast<milliseconds>(end_time2 - start_time2);
     double seconds2 = duration2.count() / 1000.0; // Convert milliseconds to seconds
     printf("Done\n");
     printf("Execution time for Counting Motifs (3-size): %.3f\n", seconds2);
     mEquation3(mcounts3);
-
     print3size(mcounts3);
 
     printf("Total Execution time for 3-size: %.3f\n", seconds1 + seconds2);
 
     printf("# of Edge (1): %lld", cg.nEdges / 2);
     printf("\n# of Edge (2): %lld", cg_2.nEdges / 2);
-    printf("\n# of Edge (3): %lld", pre_cg_3.nEdges / 2);
+    printf("\n# of Edge (3): %lld", cg_3.nEdges / 2);
     // printf("\n# of Edge (4): %lld", pre_cg_4.nEdges / 2);
     printf("\nMax Degree (1): %lld", cg.maxDegree);
     printf("\nMax Degree (2): %lld", cg_2.maxDegree);
-    printf("\nMax Degree (3): %lld\n", pre_cg_3.maxDegree);
+    printf("\nMax Degree (3): %lld\n", cg_3.maxDegree);
     // printf("\nMax Degree (4): %lld\n", pre_cg_4.maxDegree);
 
     

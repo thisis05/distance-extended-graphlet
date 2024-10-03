@@ -198,7 +198,7 @@ CGraph CGraph::reMapping(VertexIdx *mapping, VertexIdx *inverse) const{
 
 CGraph CGraph::getE2() const {
     
-    CGraph ret = newCGraph(nVertices, (nEdges * 300)); // worst case
+    CGraph ret = newCGraph(nVertices, (nEdges * 1000)); // worst case
     EdgeIdx current = 0;
     int64_t cur_maxDegree = 0;
     int64_t new_maxDegree = 0;
@@ -263,8 +263,8 @@ CGraph CGraph::getE3(CGraph G1) const {
 
         for (EdgeIdx idx = offsets[start]; idx < offsets[start + 1]; idx++) {
             VertexIdx nbr = nbors[idx];
-            for (EdgeIdx idx2 = offsets[nbr]; idx2 < offsets[nbr + 1]; idx2++) {
-                VertexIdx final = nbors[idx2];
+            for (EdgeIdx idx2 = G1.offsets[nbr]; idx2 < G1.offsets[nbr + 1]; idx2++) {
+                VertexIdx final = G1.nbors[idx2];
                 if (start != final && !check[final]) {
                     check[final] = true;
                     ret.nbors[current++] = final;

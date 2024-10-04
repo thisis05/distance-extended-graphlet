@@ -83,108 +83,108 @@ int main(int argc, char* argv[]) {
 
     
     //1. Count 3-size d-Motifs
-    double mcounts3[13];
-    printf("Count d-Motifs (3-size)\n");
-    auto start_time2 = high_resolution_clock::now();
-    countThree(&cg, &dag, &cg_2, &dag_2, &cg_3, &dag_3, mcounts3);
-    auto end_time2 = high_resolution_clock::now();
-    auto duration2 = duration_cast<milliseconds>(end_time2 - start_time2);
-    double seconds2 = duration2.count() / 1000.0; // Convert milliseconds to seconds
-    printf("Done\n");
-    printf("Execution time for Counting Motifs (3-size): %.3f\n", seconds2);
-    mEquation3(mcounts3);
-    print3size(mcounts3);
+    // double mcounts3[13];
+    // printf("Count d-Motifs (3-size)\n");
+    // auto start_time2 = high_resolution_clock::now();
+    // countThree(&cg, &dag, &cg_2, &dag_2, &cg_3, &dag_3, mcounts3);
+    // auto end_time2 = high_resolution_clock::now();
+    // auto duration2 = duration_cast<milliseconds>(end_time2 - start_time2);
+    // double seconds2 = duration2.count() / 1000.0; // Convert milliseconds to seconds
+    // printf("Done\n");
+    // printf("Execution time for Counting Motifs (3-size): %.3f\n", seconds2);
+    // mEquation3(mcounts3);
+    // print3size(mcounts3);
 
-    printf("Total Execution time for 3-size: %.3f\n", seconds1 + seconds2);
+    //printf("Total Execution time for 3-size: %.3f\n", seconds1 + seconds2);
 
-    printf("# of Edge (1): %lld", cg.nEdges / 2);
-    printf("\n# of Edge (2): %lld", cg_2.nEdges / 2);
-    printf("\n# of Edge (3): %lld", cg_3.nEdges / 2);
+    //printf("# of Edge (1): %d", cg.nEdges / 2);
+    printf("\n# of Edge (2): %llu", pre_cg_2.nEdges / 2);
+    printf("\n# of Edge (3): %llu", pre_cg_3.nEdges / 2);
     // printf("\n# of Edge (4): %lld", pre_cg_4.nEdges / 2);
-    printf("\nMax Degree (1): %lld", cg.maxDegree);
-    printf("\nMax Degree (2): %lld", cg_2.maxDegree);
-    printf("\nMax Degree (3): %lld\n", cg_3.maxDegree);
+    // printf("\nMax Degree (1): %lld", cg.maxDegree);
+    // printf("\nMax Degree (2): %lld", cg_2.maxDegree);
+    // printf("\nMax Degree (3): %lld\n", cg_3.maxDegree);
     // printf("\nMax Degree (4): %lld\n", pre_cg_4.maxDegree);
 
     
     //FILE* file = fopen("./degree/temp.txt", "w");
-    VertexIdx degree = 0, degree2 = 0, degree3 = 0, degree4 = 0, degree5 = 0, degree6 = 0;
-    Count degree_sum = 0, degree2_sum = 0, degree3_sum = 0, degree4_sum = 0, degree5_sum = 0, degree6_sum = 0;
+    // VertexIdx degree = 0, degree2 = 0, degree3 = 0, degree4 = 0, degree5 = 0, degree6 = 0;
+    // Count degree_sum = 0, degree2_sum = 0, degree3_sum = 0, degree4_sum = 0, degree5_sum = 0, degree6_sum = 0;
 
-    //fprintf(file, "outdeg1 indeg1 totaldeg1 outdeg2 indeg2 totaldeg2 totaldeg\n");
-    for (VertexIdx i = 0; i < dag.outlist.nVertices; ++i) {
-        VertexIdx off = dag.outlist.offsets[i+1] - dag.outlist.offsets[i];
-        degree_sum += off;
-        if (off > degree){
-            degree = off;
-        }
+    // //fprintf(file, "outdeg1 indeg1 totaldeg1 outdeg2 indeg2 totaldeg2 totaldeg\n");
+    // for (VertexIdx i = 0; i < dag.outlist.nVertices; ++i) {
+    //     VertexIdx off = dag.outlist.offsets[i+1] - dag.outlist.offsets[i];
+    //     degree_sum += off;
+    //     if (off > degree){
+    //         degree = off;
+    //     }
 
-        VertexIdx off2 = dag.inlist.offsets[i+1] - dag.inlist.offsets[i];
-        degree2_sum += off2;
-        if (off2 > degree2){
-            degree2 = off2;
-        }
+    //     VertexIdx off2 = dag.inlist.offsets[i+1] - dag.inlist.offsets[i];
+    //     degree2_sum += off2;
+    //     if (off2 > degree2){
+    //         degree2 = off2;
+    //     }
 
-        VertexIdx off3 = dag_2.outlist.offsets[i+1] - dag_2.outlist.offsets[i];
-        degree3_sum += off3;
-        if (off3 > degree3){
-            degree3 = off3;
-        }
+    //     VertexIdx off3 = dag_2.outlist.offsets[i+1] - dag_2.outlist.offsets[i];
+    //     degree3_sum += off3;
+    //     if (off3 > degree3){
+    //         degree3 = off3;
+    //     }
 
-        VertexIdx off4 = dag_2.inlist.offsets[i+1] - dag_2.inlist.offsets[i];
-        degree4_sum += off4;
-        if (off4 > degree4){
-            degree4 = off4;
-        }
+    //     VertexIdx off4 = dag_2.inlist.offsets[i+1] - dag_2.inlist.offsets[i];
+    //     degree4_sum += off4;
+    //     if (off4 > degree4){
+    //         degree4 = off4;
+    //     }
 
-        VertexIdx off5 = dag_3.outlist.offsets[i+1] - dag_3.outlist.offsets[i];
-        degree5_sum += off5;
-        if (off5 > degree5){
-            degree5 = off5;
-        }
+    //     VertexIdx off5 = dag_3.outlist.offsets[i+1] - dag_3.outlist.offsets[i];
+    //     degree5_sum += off5;
+    //     if (off5 > degree5){
+    //         degree5 = off5;
+    //     }
 
-        VertexIdx off6 = dag_3.inlist.offsets[i+1] - dag_3.inlist.offsets[i];
-        degree6_sum += off6;
-        if (off6 > degree4){
-            degree4 = off6;
-        }
+    //     VertexIdx off6 = dag_3.inlist.offsets[i+1] - dag_3.inlist.offsets[i];
+    //     degree6_sum += off6;
+    //     if (off6 > degree4){
+    //         degree4 = off6;
+    //     }
 
-        VertexIdx total_off1 = off + off2;
-        VertexIdx total_off2 = off3 + off4;
-        VertexIdx total_off3 = off5 + off6;
-        VertexIdx total_off = total_off1 + total_off2 + total_off3;
-        //fprintf(file, "%lld %lld %lld %lld %lld %lld %lld\n", off, off2, total_off1, off3, off4, total_off2, total_off);
-    }
-    //fclose(file);
-    printf("DAG (Out) ______________________________________________________\n");
+    //     VertexIdx total_off1 = off + off2;
+    //     VertexIdx total_off2 = off3 + off4;
+    //     VertexIdx total_off3 = off5 + off6;
+    //     VertexIdx total_off = total_off1 + total_off2 + total_off3;
+    //     //fprintf(file, "%lld %lld %lld %lld %lld %lld %lld\n", off, off2, total_off1, off3, off4, total_off2, total_off);
+    // }
+    // //fclose(file);
+    // printf("DAG (Out) ______________________________________________________\n");
     
-    printf("Average Degree : %.lld\n", degree_sum / dag.outlist.nVertices);
-    printf("Max Degreee : %lld\n", degree);
+    // printf("Average Degree : %.lld\n", degree_sum / dag.outlist.nVertices);
+    // printf("Max Degreee : %lld\n", degree);
 
-    printf("DAG (in) ______________________________________________________\n");
+    // printf("DAG (in) ______________________________________________________\n");
    
-    printf("Average Degree : %.lld\n", degree2_sum / dag.inlist.nVertices);
-    printf("Max Degree : %lld\n", degree2);
+    // printf("Average Degree : %.lld\n", degree2_sum / dag.inlist.nVertices);
+    // printf("Max Degree : %lld\n", degree2);
 
-    printf("DAG 2 (Out) ______________________________________________________\n");
+    // printf("DAG 2 (Out) ______________________________________________________\n");
 
-    printf("Average Degree : %.lld\n", degree3_sum / dag_2.outlist.nVertices);
-    printf("Max Degree : %lld\n", degree3);
+    // printf("Average Degree : %.lld\n", degree3_sum / dag_2.outlist.nVertices);
+    // printf("Max Degree : %lld\n", degree3);
 
-    printf("DAG 2 (in) ______________________________________________________\n");
+    // printf("DAG 2 (in) ______________________________________________________\n");
 
-    printf("Average Degree : %.lld\n", degree4_sum / dag_2.inlist.nVertices);
-    printf("Max Degree : %lld\n", degree4);
+    // printf("Average Degree : %.lld\n", degree4_sum / dag_2.inlist.nVertices);
+    // printf("Max Degree : %lld\n", degree4);
 
-    printf("DAG 3 (Out) ______________________________________________________\n");
+    // printf("DAG 3 (Out) ______________________________________________________\n");
 
-    printf("Average Degree : %.lld\n", degree5_sum / dag_3.outlist.nVertices);
-    printf("Max Degree : %lld\n", degree5);
+    // printf("Average Degree : %.lld\n", degree5_sum / dag_3.outlist.nVertices);
+    // printf("Max Degree : %lld\n", degree5);
 
-    printf("DAG 3 (in) ______________________________________________________\n");
+    // printf("DAG 3 (in) ______________________________________________________\n");
 
-    printf("Average Degree : %.lld\n", degree6_sum / dag_3.inlist.nVertices);
-    printf("Max Degree : %lld\n", degree6);
+    // printf("Average Degree : %.lld\n", degree6_sum / dag_3.inlist.nVertices);
+    // printf("Max Degree : %lld\n", degree6);
 
 
     #ifdef PRINT_CSR

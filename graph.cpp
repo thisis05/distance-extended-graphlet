@@ -131,8 +131,8 @@ CGraph CGraph::renameByDegreeOrder() const
     ret.offsets[0] = 0;
     EdgeIdx current = 0;
 
-    int64_t cur_maxDegree = 0;
-    int64_t new_maxDegree = 0;
+    Count cur_maxDegree = 0;
+    Count new_maxDegree = 0;
 
     // Loop over new vertices
     for (VertexIdx new_label=0; new_label < nVertices; new_label++)
@@ -168,8 +168,8 @@ CGraph CGraph::reMapping(VertexIdx *mapping, VertexIdx *inverse) const{
     ret.offsets[0] = 0;
     EdgeIdx current = 0;
 
-    int64_t cur_maxDegree = 0;
-    int64_t new_maxDegree = 0;
+    Count cur_maxDegree = 0;
+    Count new_maxDegree = 0;
 
     for (VertexIdx new_label=0; new_label < nVertices; new_label++)
     {
@@ -200,8 +200,8 @@ CGraph CGraph::getE2() const {
     
     CGraph ret = newCGraph(nVertices, (nEdges * 1000)); // worst case
     EdgeIdx current = 0;
-    int64_t cur_maxDegree = 0;
-    int64_t new_maxDegree = 0;
+    Count cur_maxDegree = 0;
+    Count new_maxDegree = 0;
     
     ret.offsets[0] = 0;
     for (VertexIdx start = 0; start < nVertices; start++) {
@@ -239,11 +239,12 @@ CGraph CGraph::getE2() const {
 }
 
 CGraph CGraph::getE3(CGraph G1) const {
-    
-    CGraph ret = newCGraph(nVertices, (nEdges * 300)); // worst case
+    printf("initial Edges : %llu\n", nEdges);
+    CGraph ret = newCGraph(nVertices, (nEdges * 500)); // worst case
+    //printf("done.\n");
     EdgeIdx current = 0;
-    int64_t cur_maxDegree = 0;
-    int64_t new_maxDegree = 0;
+    Count cur_maxDegree = 0;
+    Count new_maxDegree = 0;
     
     
     ret.offsets[0] = 0;
@@ -268,12 +269,15 @@ CGraph CGraph::getE3(CGraph G1) const {
                 if (start != final && !check[final]) {
                     check[final] = true;
                     ret.nbors[current++] = final;
+                    if (current % 100000000 == 0){
+                        printf("%llu\n", current);
+                    }
                 }
             }
         }
-        // if (start % 10000 == 0) {
-        //     printf("Completed Node: %lld / %lld\n", start, nVertices);
-        // }
+        if (start % 10000 == 0) {
+            printf("Completed Node: %lld / %lld\n", start, nVertices);
+        }
 
         ret.offsets[start + 1] = current;
         new_maxDegree = ret.degree(start);
@@ -283,6 +287,8 @@ CGraph CGraph::getE3(CGraph G1) const {
     }
 
     ret.nEdges = current;
+    printf("final Edges : %llu\n", current);
+    printf("need : %.llu\n", current / nEdges);
     ret.nbors = (VertexIdx*)realloc(ret.nbors, current * sizeof(VertexIdx));
     ret.maxDegree = cur_maxDegree;
 
@@ -294,8 +300,8 @@ CGraph CGraph::getE4(CGraph G1, CGraph G2) const {
     CGraph ret = newCGraph(nVertices, (nEdges * 70)); // worst case
     printf("done?\n");
     EdgeIdx current = 0;
-    int64_t cur_maxDegree = 0;
-    int64_t new_maxDegree = 0;
+    Count cur_maxDegree = 0;
+    Count new_maxDegree = 0;
     
     
     ret.offsets[0] = 0;
@@ -411,12 +417,13 @@ void read_mtx(const std::string& filename, Graph& graph) {
     }
 
     std::istringstream iss(line);
-    int64_t n, m;
+    VertexIdx n;
+    EdgeIdx m;
     iss >> n >> n >> m;
     graph.nVertices = n;
     graph.nEdges = 2*m;
 
-    int64_t u, v;
+    VertexIdx u, v;
     EdgeIdx iEdge = 0;
 
     graph.srcs = new VertexIdx[graph.nEdges];

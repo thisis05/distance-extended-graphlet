@@ -6,9 +6,9 @@
 #include <unordered_map>
 #include <string>
 
-using VertexIdx = int64_t;
-using EdgeIdx = int64_t;
-using Count = int64_t;
+using VertexIdx = uint32_t;
+using EdgeIdx = uint64_t;
+using Count = uint64_t;
 
 struct Graph
 {
